@@ -21,7 +21,8 @@ h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(3
 .nums{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:clamp(13px,1.9vw,16px);margin:0 0 6px}
 .nums b{font-size:1.35em;font-weight:600}
 .nums .u b,.nums .u{color:var(--red)}
-.sub{color:var(--soft);font-size:12.5px;max-width:860px;margin:4px 0 0}
+.sub{color:var(--ink);font-size:13px;max-width:860px;margin:2px 0 12px}
+@media (max-width:600px){header{padding:14px 0 4px}.tag>span:last-child{display:none}h1{margin:8px 0 8px}.nums{gap:2px 14px}#strip{height:46vh}}
 /* strip */
 .stripbox{position:relative;margin:14px 0 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);background:var(--paper2)}
 .scroller{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
@@ -97,7 +98,6 @@ footer{margin:34px 0 40px;padding-top:14px;border-top:1px solid var(--ink);font-
     <div class="tag"><span>Aftershock · NEAR, <span id="range"></span></span><span>Investment thesis · evidence, not conviction</span></div>
     <h1>Did the news move the chain?</h1>
     <p class="nums" id="nums"></p>
-    <p class="sub" id="sub"></p>
   </header>
 </div>
 <div class="stripbox">
@@ -112,6 +112,7 @@ footer{margin:34px 0 40px;padding-top:14px;border-top:1px solid var(--ink);font-
     <span class="key"><i class="dot"></i>nothing</span>
     <span>Scroll the strip sideways. Tap a pin for its headlines and numbers.</span>
   </div>
+  <p class="sub" id="sub"></p>
   <div id="event"></div>
 
   <section>
@@ -175,7 +176,7 @@ function dayIndex(iso){return Math.round((Date.parse(iso+"T00:00:00Z")-day0)/864
 $("range").textContent=S.dates[0].slice(0,4)+" to "+S.dates[1];
 $("nums").innerHTML="<span><b>"+c.events+"</b> news events.</span><span><b>"+c.moved_price+"</b> moved the price.</span><span class='u'><b>"+c.moved_usage+"</b> moved usage.</span><span>Chance alone: <b>5%</b> per measure.</span>";
 var evRate=100*c.moved_usage/Math.max(1,t7.events_tested),chRate=100*t7.chance_moved_usage;
-$("sub").textContent="An event “moved” a measure only if the change after it was bigger than on 95% of ordinary days. The usage stamp looks at five measures at once, so it lands on "+chRate.toFixed(1)+"% of ordinary days by chance; it landed on "+evRate.toFixed(1)+"% of news events. "+(evRate>chRate*1.5?"News events moved usage more often than ordinary days do.":"That is no more than chance: NEAR’s usage did not follow its headlines."));
+$("sub").textContent="An event “moved” a measure only if the change after it was bigger than on 95% of ordinary days. The usage stamp looks at five measures at once, so it lands on "+chRate.toFixed(1)+"% of ordinary days by chance; it landed on "+evRate.toFixed(1)+"% of news events. "+(evRate>chRate*1.5?"News events moved usage more often than ordinary days do.":"That is no more than chance: NEAR’s usage did not follow its headlines.");
 
 /* ---------- the strip ---------- */
 var svg=$("strip"),scroller=$("scroller"),PX=2.3,PADL=150,PADR=60,W=Math.round(PADL+N*PX+PADR),H=430;
@@ -183,8 +184,8 @@ var Y={p0:50,p1:205,a0:235,a1:372,n0:378,n1:418};
 svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.setAttribute("preserveAspectRatio","none");
 function sizeStrip(){var h=svg.getBoundingClientRect().height||H;svg.style.width=Math.round(W*h/H)+"px";$("ax2").style.top=(h*Y.a0/H-4)+"px";$("ax3").style.top=(h*Y.n0/H+8)+"px";}
 function xOf(i){return PADL+i*PX;}
-function logScale(arr,lo,y0,y1){var mx=0;arr.forEach(function(v){if(v>mx)mx=v;});var a=Math.log(lo),b=Math.log(mx*1.08);return function(v){return y1-(Math.log(Math.max(v,lo))-a)/(b-a)*(y1-y0);};}
-var yP=logScale(S.price,0.5,Y.p0,Y.p1),yA=logScale(S.active_accounts,300,Y.a0,Y.a1);
+function logScale(arr,q,y0,y1){var s=arr.filter(function(v){return v!=null&&v>0;}).sort(function(x,y){return x-y;}),lo=s[Math.floor(s.length*q)]*0.85,mx=s[s.length-1];var a=Math.log(lo),b=Math.log(mx*1.08);return function(v){return y1-(Math.log(Math.max(v,lo))-a)/(b-a)*(y1-y0);};}
+var yP=logScale(S.price,0,Y.p0,Y.p1),yA=logScale(S.active_accounts,0.04,Y.a0,Y.a1);
 var g=el("g",{},svg);
 for(var gy=20;gy<H;gy+=20)el("line",{x1:0,x2:W,y1:gy,y2:gy,"class":"gl"+(gy%100===0?" major":"")},g);
 for(var d=0;d<N;d++){var dt=new Date(day0+d*864e5);if(dt.getUTCDate()===1){var jan=dt.getUTCMonth()===0;el("line",{x1:xOf(d),x2:xOf(d),y1:0,y2:H,"class":"gl"+(jan?" major":"")},g);if(jan){var t=el("text",{x:xOf(d)+5,y:16,"class":"yr"},g);t.textContent=dt.getUTCFullYear();}}}
@@ -232,9 +233,9 @@ window.addEventListener("resize",sizeStrip);
 function showEvent(ev,node){
   pins.forEach(function(p){p.node.classList.remove("sel");});if(node)node.classList.add("sel");
   var rows=Object.keys(ev.measures).map(function(m){var x=ev.measures[m],out=x.verdict==="up"||x.verdict==="down";
-    return "<tr><td>"+NAMES[m]+"</td><td class='"+(out?"out":"")+"'>"+pct(x.change)+"</td><td>"+(x.verdict==="not_tested"?"not tested (missing days)":out?"outside the ordinary band ("+x.verdict+")":"inside the ordinary band")+"</td></tr>";}).join("");
+    return "<tr><td>"+NAMES[m]+"</td><td class='"+(out?"out":"")+"'>"+pct(x.change)+"</td><td>"+(x.verdict==="not_tested"?"not tested":out?"OUTSIDE ("+x.verdict+")":"inside")+"</td></tr>";}).join("");
   var heads=(ev.headlines||[]).map(function(h){return "<li><a href='"+esc(safeUrl(h.url))+"' rel='noopener noreferrer' target='_blank'>"+esc(h.title)+"</a> <span class='small'>"+esc(h.domain)+"</span></li>";}).join("");
-  $("event").innerHTML="<div class='card'><h3><span class='badge "+ev.stamp+"'>"+STAMP[ev.stamp]+"</span>"+ev.id+" · "+ev.start+(ev.end!==ev.start?" to "+ev.end:"")+" · "+esc(ev.type)+"</h3><p style='margin:6px 0 10px'>"+esc(ev.summary)+" <span class='small'>("+Math.round(ev.articles)+" articles in the spike)</span></p><div class='grid2'><div class='tablebox'><table style='min-width:0'><tr><th>Measure</th><th>7 days after vs 28 before</th><th style='text-align:left'>Against ordinary days</th></tr>"+rows+"</table><p class='small'>Stamp with a 3-day window: "+STAMP[ev.stamps_by_window["3"]]+". With 14 days: "+STAMP[ev.stamps_by_window["14"]]+".</p></div><div>"+(heads?"<ul class='plain'>"+heads+"</ul>":"<p class='small'>No headlines were saved for this spike.</p>")+"</div></div></div>";
+  $("event").innerHTML="<div class='card'><h3><span class='badge "+ev.stamp+"'>"+STAMP[ev.stamp]+"</span>"+ev.id+" · "+ev.start+(ev.end!==ev.start?" to "+ev.end:"")+" · "+esc(ev.type)+"</h3><p style='margin:6px 0 10px'>"+esc(ev.summary)+" <span class='small'>("+Math.round(ev.articles)+" articles in the spike)</span></p><div class='grid2'><div class='tablebox'><table style='min-width:0'><tr><th>Measure</th><th>7 days after vs 28 before</th><th>Ordinary-day band</th></tr>"+rows+"</table><p class='small'>Stamp with a 3-day window: "+STAMP[ev.stamps_by_window["3"]]+". With 14 days: "+STAMP[ev.stamps_by_window["14"]]+".</p></div><div>"+(heads?"<ul class='plain'>"+heads+"</ul>":"<p class='small'>No headlines were saved for this spike.</p>")+"</div></div></div>";
 }
 var first=A.events.filter(function(e){return e.stamp==="moved_usage";}).pop()||A.events[A.events.length-1];
 if(first)showEvent(first,(pins.filter(function(p){return p.ev===first;})[0]||{}).node);

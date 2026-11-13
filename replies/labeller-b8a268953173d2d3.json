@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2021-03-04 to 2021-03-04 (9 articles).\nHeadlines:\n- Iota releases Smart Contracts Protocol alpha ahead of Coordicide rollout (cointelegraph.com)\n- KKTC Ba\u015fbakan\u0131 Saner : Ana vatan T\u00fcrkiye ile tam bir uyum i\u00e7indeyiz (www.ogunhaber.com)\n- Ba\u015fbakan Saner : T\u00fcrkiye Cumhuriyeti b\u00fct\u00e7emize 3 milyar 250 milyon tl katk\u0131 sa\u011fl\u0131yor (www.detaykibris.com)\n- Saner a\u015f\u0131yla geldi (www.yeniduzen.com)",
+ "reply": "{\"type\": \"other\", \"summary\": \"Headlines include Iota protocol alpha release and Turkish political statements, unrelated to NEAR Protocol.\"}"
+}

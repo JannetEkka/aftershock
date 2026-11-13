@@ -16,7 +16,7 @@ from .snapshot import ROOT
 REPLIES = os.path.join(ROOT, "replies")
 URL = "https://integrate.api.nvidia.com/v1/chat/completions"
 # Two different model families. The Examiner of a claim is always the family that did NOT write it.
-MODELS = {"glm": "z-ai/glm-5.3-flash", "nemotron": "nvidia/nemotron-3-ultra-550b-a55b"}
+MODELS = {"glm": "z-ai/glm-5.3-flash", "nemotron": "nvidia/nemotron-3.5-lightning-30b-a3b"}
 OTHER = {"glm": "nemotron", "nemotron": "glm"}
 
 calls = []   # log of every call in this run: role, family, attempt, valid, error
@@ -57,7 +57,7 @@ def chat(role, family, system, user, attempt=0, max_tokens=16000):
         try:
             req = urllib.request.Request(URL, data=body, headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
             parts = []
-            with urllib.request.urlopen(req, timeout=600) as r:
+            with urllib.request.urlopen(req, timeout=240) as r:
                 for line in r:
                     line = line.decode("utf-8", "replace").strip()
                     if not line.startswith("data:") or line == "data: [DONE]":
@@ -123,6 +123,16 @@ def ask_json(role, family, system, user, validate, max_tokens=16000):
         if error is None:
             return obj
     return None
+
+
+def warm(jobs, workers=8):
+    """Live mode only: make first-attempt calls in parallel so the slow part is not one long queue.
+    `jobs` is a list of (role, family, system, user). The normal, ordered pass then reads the recordings."""
+    if mode() != "live" or not jobs:
+        return
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(workers) as ex:
+        list(ex.map(lambda j: chat(*j), jobs))
 
 
 def prune():

@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2021-07-29 to 2021-07-29 (3 articles).\nHeadlines:\n- Fabric Ventures launches $130 million fund to invest in digital assets and decentralisation , EIF on board (tech.eu)\n- Fabric Ventures announces $130m million fund to invest in digital assets and decentralisation (www.cityam.com)\n- Supported by the European Investment Fund , Fabric Ventures Raises $130 Million for DeFi , Digital Asset Fund (www.crowdfundinsider.com)",
+ "reply": "{\"type\": \"other\", \"summary\": \"Fabric Ventures launches $130M fund to invest in digital assets and decentralization with European Investment Fund support.\"}"
+}

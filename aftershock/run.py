@@ -17,18 +17,35 @@ LABELLER, JUDGE = "nemotron", "glm"
 BASELINE_RIGHT = 0.10                   # AI alone, from memory: "right" = within 10% of our data (1% also reported)
 
 
-def load_headlines():
+def load_headlines(evs):
+    """{event key: [headline]} from GDELT's top articles per day, over each event's days. Empty if the file is absent."""
     path = os.path.join(snapshot.RAW, "gdelt_headlines.json")
     if not os.path.exists(path):
         return {}
     with open(path) as f:
-        return json.load(f)
+        days = {d["date"][:8]: d.get("toparts", []) for d in json.load(f)["timeline"][0]["data"]}
+    out = {}
+    for ev in evs:
+        seen, hs = set(), []
+        d = date.fromisoformat(ev["start"])
+        while d <= date.fromisoformat(ev["end"]):
+            for a in days.get(d.strftime("%Y%m%d"), []):
+                title = " ".join(str(a.get("title", "")).split())
+                if title and title.lower() not in seen:
+                    seen.add(title.lower())
+                    url = str(a.get("url", ""))
+                    hs.append({"title": title[:200], "url": url, "domain": url.split("/")[2] if url.count("/") >= 2 else ""})
+            d += timedelta(days=1)
+        out[ev["start"] + "_" + ev["end"]] = hs
+    return out
 
 
 def label_events(evs, headlines):
     labels = {}
+    hl = lambda ev: [h for h in headlines.get(ev["start"] + "_" + ev["end"], []) if h.get("title")]
+    llm.warm([("labeller", LABELLER, roles.LABEL_SYS, roles.label_user(ev, hl(ev))) for ev in evs if hl(ev)])
     for ev in evs:
-        hs = [h for h in headlines.get(ev["start"] + "_" + ev["end"], []) if h.get("title")]
+        hs = hl(ev)
         o = llm.ask_json("labeller", LABELLER, roles.LABEL_SYS, roles.label_user(ev, hs), roles.label_valid) if hs else None
         labels[ev["id"]] = ({"type": o["type"], "summary": o["summary"].strip()} if o else
                             {"type": "unlabelled", "summary": "No usable headlines were returned for this spike." if not hs
@@ -127,7 +144,7 @@ def main():
     ctx = claims.Context(dates, cols, evs, tests)
     eventtest.print_report(tests)
     try:
-        headlines = load_headlines()
+        headlines = load_headlines(evs)
         labels = label_events(evs, headlines)
         brief = roles.data_brief(ctx, labels, cutoff)
         user = "DATA:\n" + brief
@@ -136,7 +153,10 @@ def main():
         for s, other in (("bull", "bear"), ("bear", "bull")):
             raw[s] = raw[s] + write_claims(s, s + "_rebuttal", roles.rebut_sys(s),
                                            f"THE OTHER SIDE'S CLAIMS:\n{show(raw[other][:8])}\n\n{user}", 1, 3, len(raw[s]) + 1)
-        checked = [check_claim(c, ctx, labels, headlines) for s in ("bull", "bear") for c in raw[s]]
+        todo = [c for s in ("bull", "bear") for c in raw[s]]
+        llm.warm([("examiner", llm.OTHER[FAMILY[c["side"]]], roles.EXAM_SYS, roles.exam_user(c, code, ctx, labels, headlines))
+                  for c in todo for code in [claims.code_checks(c, ctx)] if code["status"] == "pass"])
+        checked = [check_claim(c, ctx, labels, headlines) for c in todo]
         kept = [c for c in checked if c["status"] == "kept"]
         kept_by_id = {c["id"]: c for c in kept}
         thesis = {"title": None, "sections": {s: [] for s in roles.SECTIONS}, "note": None}

@@ -1,7 +1,7 @@
 """`make live`: download the three public sources into data/raw. No keys needed.
 
 Usage: python -m aftershock.fetch sources     (NearBlocks, DefiLlama, GDELT daily counts)
-       python -m aftershock.fetch headlines   (GDELT headlines for each event found)
+       python -m aftershock.fetch headlines   (GDELT top headlines per day)
 Set AFTERSHOCK_REUSE=nearblocks to keep an existing NearBlocks file (its free limit is a few calls).
 """
 import json
@@ -54,7 +54,7 @@ def get_json(name, url, tries=3):
 
 def save(fname, obj):
     with open(os.path.join(snapshot.RAW, fname), "w") as f:
-        json.dump(obj, f, separators=(",", ":"), sort_keys=True)
+        json.dump(obj, f, separators=(",", ":"), sort_keys=True, ensure_ascii=False)
 
 
 def gdelt_url(mode, start, end, **extra):
@@ -85,31 +85,13 @@ def fetch_sources():
 
 
 def fetch_headlines():
-    """Headlines for each event window. Depends on the event finder, so it runs after `sources`."""
-    from . import events
-    dates, cols = snapshot.load_daily()
-    evs = events.find_events(dates, cols["news_count"])
-    path = os.path.join(snapshot.RAW, "gdelt_headlines.json")
-    out = {}
-    if os.path.exists(path) and "headlines" in os.environ.get("AFTERSHOCK_REUSE", ""):
-        with open(path) as f:
-            out = json.load(f)
-    for i, ev in enumerate(evs):
-        key = ev["start"] + "_" + ev["end"]
-        if key in out:
-            continue
-        url = gdelt_url("artlist", date.fromisoformat(ev["start"]), date.fromisoformat(ev["end"]),
-                        maxrecords="40", sort="hybridrel")
-        arts = get_json("news headlines", url).get("articles", [])
-        out[key] = [{"title": a.get("title", "").strip(), "domain": a.get("domain", ""), "url": a.get("url", ""),
-                     "seen": a.get("seendate", ""), "lang": a.get("language", "")} for a in arts]
-        print(f"  {i + 1}/{len(evs)} {key}: {len(out[key])} headlines", flush=True)
-        save("gdelt_headlines.json", out)
-    save("gdelt_headlines.json", {k: out[k] for k in sorted(out) if k in {e['start'] + '_' + e['end'] for e in evs}})
+    """Top headlines for every day, in one request (GDELT's timeline-with-articles mode)."""
+    today = datetime.now(timezone.utc).date()
+    save("gdelt_headlines.json", get_json("news headlines", gdelt_url("timelinevolinfo", date(2020, 7, 1), today)))
     with open(os.path.join(snapshot.DATA, "manifest.json")) as f:
         m = json.load(f)
     m = snapshot.write_manifest(m["cutoff"])
-    print(f"snapshot fingerprint with headlines: {m['fingerprint']}")
+    print(f"  headlines: fetched\nsnapshot fingerprint: {m['fingerprint']}")
 
 
 if __name__ == "__main__":
