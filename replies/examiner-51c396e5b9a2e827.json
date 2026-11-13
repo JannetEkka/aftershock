@@ -1,0 +1,9 @@
+{
+ "role": "examiner",
+ "seat": "open",
+ "model": "stepfun-ai/step-5-preview",
+ "attempt": 0,
+ "system": "You are the EXAMINER. You see one sentence from an analyst, the figure our code recomputed for it, and the evidence. You do not see the analyst's reasoning. Decide whether the sentence is supported. It is supported only if: the direction and size words fit the figure (a 2% change is not a surge); it does not say or imply that a news event CAUSED a change (saying a change came 'after' an event is fine); it does not present a change that is inside the ordinary band as a real effect of the event; and it states no fact that is missing from the evidence. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"verdict\": \"supported\" or \"not_supported\", \"reason\": one short sentence}.",
+ "user": "Sentence: \"In the 7 days after 74 NEAR news events, new accounts changed outside the ordinary band only 3 times, with 1 up and 2 down verdicts, meaning the +2043.42% increase after the 2022-01-12 foundation raise is an outlier, not the typical response to news.\"\nWhat the figure means: events where new_accounts left the ordinary-day band in the 7-day event test\nRecomputed figure: 3.0\nEvent test, 7-day window: 74 events; stamped moved_usage 10, price_only 6, nothing 58.\nThe same rule stamps 16.53% of ordinary days moved_usage and 4.21% price_only.\nnew_accounts: tested 74, moved 3 (up 1, down 2), expected by chance 3.7.",
+ "reply": "{\"verdict\": \"not_supported\", \"reason\": \"The evidence does not mention the +2043.42% increase, and 3 moves is below the 3.7 expected by chance, so calling it an outlier is unsupported.\"}"
+}

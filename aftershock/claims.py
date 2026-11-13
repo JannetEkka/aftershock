@@ -193,7 +193,7 @@ def number_supported(n, allowed):
 
 def allowed_numbers(claim):
     """Numbers a sentence may use when it cites this kept claim: its figure, recomputation, and whatever its own text states."""
-    out = [claim["figure"], claim["recomputed"], 28.0, 95.0, 5.0, float(claim.get("after_days", 7))]
+    out = [claim["figure"], claim["recomputed"], 28.0, 95.0, 5.0, float(claim.get("after_days") or 7)]
     out += numbers_in(claim["text"])
     for p in (claim.get("period"), claim.get("period_b")):
         if p:
