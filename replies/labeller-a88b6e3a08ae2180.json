@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2023-01-06 to 2023-01-06 (12 articles).\nHeadlines:\n- Gain Massive Profits In The Upcoming Christmas Season With These Three Altcoins - Dogeliens Token , Near Protocol and Chainlink (www.tribuneindia.com)\n- Crypto Verse launches AMA Sessions and garners attention of large audience . (www.wiredprnews.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Articles discuss profiting from altcoins like NEAR Protocol during the Christmas season.\"}"
+}

@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2022-11-10 to 2022-11-10 (10 articles).\nHeadlines:\n- First fan - owned team launches for SailGP (www.yachtsandyachting.com)\n- Crypto On Nov . 10 : Bitcoin Stumbles to Two - Year Low , After Massive Sell - Off (www.ibtimes.com)\n- 9 Most Eco Friendly Crypto Coins in 2022 (www.business2community.com)\n- 8 New Coinbase Listings to Watch November 2022 (www.business2community.com)\n- Best Crypto on Twitter in November 2022 (www.business2community.com)\n- These Were The 10 Worst - Performing Cryptocurrencies In Octob ... (menafn.com)\n- 10 Most Promising Cryptocurrencies in 2022 (www.business2community.com)\n- Where to Buy Biconomy Token 2022 Beginner Guide (www.business2community.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Crypto market updates: Bitcoin drops to two-year low, new Coinbase listings, and eco-friendly coin rankings.\"}"
+}

@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2025-04-11 to 2025-04-11 (7 articles).\nHeadlines:\n- Cronos ( CRO ) Price Tops $0 . 0858 (www.modernreaders.com)\n- Avalanche ( AVAX ) Price Up 4 . 4 % This Week (www.themarketsdaily.com)\n- TerraClassicUSD ( USTC ) Self Reported Market Cap Reaches $63 . 35 Million (www.wkrb13.com)\n- Cardano ( ADA ) Trading Down 3 . 6 % Over Last 7 Days (www.tickerreport.com)\n- Results of the ixCrypto Index Series Quarterly Review ( 2025 Q1 ) (portal.sina.com.hk)\n- The Slovenia Times (sloveniatimes.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Cryptocurrency price movements and index review results dominate today's crypto news.\"}"
+}

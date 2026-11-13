@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2025-12-11 to 2025-12-11 (6 articles).\nHeadlines:\n- AI tokens tumble after Oracle disappointing quarterly results (finance.yahoo.com)\n- holoride Reaches Self Reported Market Cap of $377 . 73 Thousand ( RIDE ) (www.themarketsdaily.com)\n- OceanPal Inc . Announces Accrued Dividend Payment in Tender Offer (www.prnewswire.com)\n- Cosmos ( ATOM ) Price Reaches $2 . 19 on Top Exchanges (www.themarketsdaily.com)\n- Cardano ( ADA ) One Day Trading Volume Reaches $1 . 04 Billion (www.tickerreport.com)\n- Internet Computer ( ICP ) Price Hits $3 . 39 on Major Exchanges (www.themarketsdaily.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Crypto market: AI tokens, holoride, OceanPal, Cosmos, Cardano, Internet Computer move.\"}"
+}

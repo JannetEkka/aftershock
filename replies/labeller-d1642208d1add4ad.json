@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2025-11-21 to 2025-11-21 (5 articles).\nHeadlines:\n- Cryptocurrency Crash : \u20b917000000000000 \u0938\u094d\u0935\u093e\u0939\u093e ... 24 \u0918\u0902\u091f\u0947 \u092e\u0947\u0902 \u0915\u094d\u0930\u093f\u092a\u094d\u091f\u094b \u0915\u0940 \u0926\u0941\u0928\u093f\u092f\u093e \u092e\u0947\u0902 \u092c\u095c\u0940 \u092c\u0930\u094d\u092c\u093e\u0926\u0940 , \u092c\u093f\u091f\u0915\u0949\u0907\u0928 7 % \u0938\u0947 \u091c\u094d\u092f\u093e\u0926\u093e \u0917\u093f\u0930\u0940 (navbharattimes.indiatimes.com)\n- Nvidia Earnings Beat , Strong Outlook Calm Jittery Markets ; Bitcoin Re - Takes $90K (finance.yahoo.com)\n- Wanchain Self Reported Market Capitalization Tops $12 . 79 Million ( WAN ) (www.themarketsdaily.com)\n- Cronos ( CRO ) Self Reported Market Capitalization Tops $9 . 56 Billion (www.themarketsdaily.com)\n- Internet Computer ( ICP ) Self Reported Market Capitalization Reaches $2 . 30 Billion (www.dailypolitical.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Crypto market declines broadly with Bitcoin dropping over 7%, while Wanchain, Cronos and Internet Computer report market cap updates.\"}"
+}

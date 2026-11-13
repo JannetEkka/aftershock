@@ -1,0 +1,8 @@
+{
+ "role": "labeller",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2026-06-17 to 2026-06-17 (7 articles).\nHeadlines:\n- Velas Price Up 4 . 2 % Over Last 7 Days ( VLX ) (www.dailypolitical.com)\n- Velas Hits Self Reported Market Cap of $1 . 39 Million ( VLX ) (www.tickerreport.com)\n- Cronos Trading Down 0 . 8 % Over Last Week ( CRO ) (www.dailypolitical.com)\n- Cosmos ( ATOM ) Price Up 10 . 1 % Over Last Week (www.themarketsdaily.com)\n- Oasis Network ( ROSE ) One Day Volume Hits $6 . 03 Million (www.tickerreport.com)\n- OMG Network Price Up 3 . 5 % This Week ( OMG ) (www.tickerreport.com)\n- Avalanche ( AVAX ) Market Cap Hits $2 . 96 Billion (www.tickerreport.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Crypto market-wide price movements and market cap updates were reported across multiple altcoins on June 17, 2026.\"}"
+}

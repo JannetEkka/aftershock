@@ -123,6 +123,11 @@ EXAM_SYS = ("You are the EXAMINER. You see one sentence from an analyst, the fig
 def exam_user(c, code, ctx, labels, headlines):
     L = [f'Sentence: "{c["text"]}"', f"What the figure means: {code['how']}", f"Recomputed figure: {round(code['recomputed'], 4)}"]
     after = str(c.get("after_days", 7))
+    if c["kind"] in ("period_mean", "period_change"):
+        for per in (c.get("period"), c.get("period_b") if c["kind"] == "period_change" else None):
+            if per:
+                L.append(f"Mean of daily {c['measure']} ({NAMES[c['measure']]}) over {per}: {fmt(ctx.period_mean(c['measure'], per))}")
+        L.append(f"The snapshot runs from {ctx.dates[0]} to {ctx.dates[-1]}, so its first and last years are partial.")
     if c["kind"] in ("events_moved", "chance_rate"):
         r = ctx.tests[after]
         s = r["summary"]
