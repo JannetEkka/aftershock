@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aftershock: did the news move the chain?</title>
+<meta name="description" content="Every NEAR news spike since 2020, tested against the chain's own daily records and against ordinary days.">
+<style>
+:root{
+  --paper:#f3f0e6; --paper2:#ebe7da; --grid:#cfd8cf; --grid2:#b9c6ba; --ink:#1c2630; --soft:#5d6a72; --faint:#8b979c;
+  --red:#c6281c; --line:#c9c4b4; --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--mono);font-size:14px;line-height:1.55}
+a{color:inherit;text-underline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+header{padding:22px 0 10px}
+.tag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);display:flex;gap:14px;flex-wrap:wrap;justify-content:space-between}
+h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(30px,6.2vw,58px);line-height:1.04;margin:14px 0 12px;letter-spacing:-.01em}
+.nums{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:clamp(13px,1.9vw,16px);margin:0 0 6px}
+.nums b{font-size:1.35em;font-weight:600}
+.nums .u b,.nums .u{color:var(--red)}
+.sub{color:var(--soft);font-size:12.5px;max-width:860px;margin:4px 0 0}
+/* strip */
+.stripbox{position:relative;margin:14px 0 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);background:var(--paper2)}
+.scroller{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#strip{display:block;height:min(52vh,430px);min-height:300px}
+.axis{position:absolute;left:0;top:0;bottom:0;width:0;pointer-events:none}
+.axis span{position:absolute;left:8px;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;background:var(--paper2);padding:1px 5px;border:1px solid var(--line);white-space:nowrap}
+.trace{fill:none;stroke:var(--ink);stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.news{fill:var(--grid2)}
+.gl{stroke:var(--grid);stroke-width:1}.gl.major{stroke:var(--grid2)}
+.yr{font:10.5px var(--mono);fill:var(--soft);letter-spacing:.08em}
+.pin{cursor:pointer}
+.pin line{stroke:var(--faint);stroke-width:1;stroke-dasharray:2 3}
+.pin circle{fill:var(--paper2);stroke:var(--faint);stroke-width:1.2}
+.pin.price_only line{stroke:var(--ink)} .pin.price_only circle{stroke:var(--ink);fill:var(--ink)}
+.pin.moved_usage line{stroke:var(--red);stroke-dasharray:none} .pin.moved_usage circle{stroke:var(--red);fill:var(--red)}
+.pin.sel circle{stroke-width:4;stroke-opacity:.35}
+.pin .hit{fill:transparent;stroke:none}
+.stamp rect{fill:none;stroke-width:1.6}
+.stamp text{font:700 10px var(--mono);letter-spacing:.12em}
+.stamp.price_only rect{stroke:var(--ink)} .stamp.price_only text{fill:var(--ink)}
+.stamp.moved_usage rect{stroke:var(--red)} .stamp.moved_usage text{fill:var(--red)}
+.pin{opacity:0;transition:opacity .25s}
+.pin.on{opacity:1}
+.pin.on .stamp{animation:land .34s cubic-bezier(.2,1.6,.4,1) both;transform-box:fill-box;transform-origin:center}
+@keyframes land{0%{transform:scale(2.4) rotate(-14deg);opacity:0}100%{transform:scale(1) rotate(-6deg);opacity:.92}}
+.controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:11.5px;color:var(--soft);padding:8px 0}
+.key{display:inline-flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--faint);display:inline-block}
+.dot.p{background:var(--ink);border-color:var(--ink)} .dot.u{background:var(--red);border-color:var(--red)}
+button{font:inherit;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;background:none;border:1px solid var(--ink);color:var(--ink);padding:5px 10px;cursor:pointer;border-radius:0}
+button:hover{background:var(--ink);color:var(--paper)}
+/* cards */
+section{padding:26px 0 6px;border-top:1px solid var(--line);margin-top:26px}
+h2{font-family:Georgia,serif;font-weight:400;font-size:clamp(21px,3vw,28px);margin:0 0 4px}
+.lead{color:var(--soft);font-size:12.5px;margin:0 0 14px;max-width:820px}
+.card{border:1px solid var(--ink);background:var(--paper);padding:14px 16px;margin:10px 0}
+.card h3{margin:0 0 4px;font-size:14px}
+.badge{display:inline-block;border:1.5px solid var(--ink);padding:0 6px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;transform:rotate(-2deg);margin-right:8px}
+.badge.moved_usage{border-color:var(--red);color:var(--red)} .badge.nothing,.badge.not_tested{border-color:var(--faint);color:var(--soft)}
+.tablebox{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:12.5px;min-width:520px}
+th,td{text-align:right;padding:5px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:600;color:var(--soft);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+td.out{font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.thesis p{font-family:Georgia,serif;font-size:17px;line-height:1.55;margin:0 0 10px;max-width:780px}
+.thesis h3{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--soft);margin:18px 0 6px}
+.chip{font:600 10.5px var(--mono);border:1px solid var(--ink);padding:0 5px;margin-left:5px;cursor:pointer;background:var(--paper);vertical-align:2px;white-space:nowrap}
+.chip:hover,.chip.sel{background:var(--ink);color:var(--paper)}
+.cut,.removed .t{text-decoration:line-through;text-decoration-thickness:1px;color:var(--soft)}
+.why{display:block;font:12px var(--mono);color:var(--soft);text-decoration:none;margin-top:2px}
+.claim{border-left:3px solid var(--ink);padding:6px 0 6px 12px;margin:10px 0}
+.claim.removed{border-left-color:var(--faint)}
+.claim .meta{font-size:11.5px;color:var(--soft)}
+.claim.flash{background:#fff6}
+.score{display:flex;gap:26px;flex-wrap:wrap;margin:8px 0 12px}
+.score div b{display:block;font-size:30px;font-family:Georgia,serif;font-weight:400;line-height:1.1}
+.small{font-size:12px;color:var(--soft)}
+ul.plain{list-style:none;padding:0;margin:0}
+ul.plain li{padding:6px 0;border-bottom:1px solid var(--line)}
+code{background:var(--paper2);padding:1px 5px;border:1px solid var(--line);font-size:12.5px;word-break:break-all}
+footer{margin:34px 0 40px;padding-top:14px;border-top:1px solid var(--ink);font-size:12px;color:var(--soft)}
+#caption{position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;pointer-events:none;z-index:9}
+#caption span{background:var(--ink);color:var(--paper);font:19px/1.4 Georgia,serif;padding:10px 18px;margin:0 16px 22px;max-width:980px;text-align:center}
+@media (prefers-reduced-motion:reduce){.pin{transition:none}.pin.on .stamp{animation:none;transform:rotate(-6deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="tag"><span>Aftershock · NEAR, <span id="range"></span></span><span>Investment thesis · evidence, not conviction</span></div>
+    <h1>Did the news move the chain?</h1>
+    <p class="nums" id="nums"></p>
+    <p class="sub" id="sub"></p>
+  </header>
+</div>
+<div class="stripbox">
+  <div class="axis"><span style="top:8px">Price, USD (log)</span><span id="ax2">Active accounts per day (log)</span><span id="ax3">News articles per day</span></div>
+  <div class="scroller" id="scroller"><svg id="strip" role="img" aria-label="Strip chart of NEAR price and active accounts with news events pinned"></svg></div>
+</div>
+<div class="wrap">
+  <div class="controls">
+    <button id="replay" type="button">Draw again</button>
+    <span class="key"><i class="dot u"></i>moved usage</span>
+    <span class="key"><i class="dot p"></i>price only</span>
+    <span class="key"><i class="dot"></i>nothing</span>
+    <span>Scroll the strip sideways. Tap a pin for its headlines and numbers.</span>
+  </div>
+  <div id="event"></div>
+
+  <section>
+    <h2>The event test</h2>
+    <p class="lead" id="testlead"></p>
+    <div class="tablebox"><table id="testtable"></table></div>
+    <p class="small" id="testnote"></p>
+  </section>
+
+  <section class="thesis">
+    <h2 id="thesistitle">The thesis</h2>
+    <p class="lead">Written by a Judge model from checked claims only. A sentence stays only if code finds a kept claim behind it and behind every number in it. The small marks open the claim: its figure, how the code recomputed it, and what the Examiner said.</p>
+    <div id="thesis"></div>
+  </section>
+
+  <section>
+    <h2>Claims: kept and removed</h2>
+    <p class="lead" id="claimlead"></p>
+    <div id="claims"></div>
+  </section>
+
+  <section>
+    <h2>The same models, without the data</h2>
+    <p class="lead">Asked for a NEAR thesis with figures and given no data. Code checked each figure against the snapshot. "Uncheckable" means our dataset cannot test it; it is never counted as wrong.</p>
+    <div class="score" id="score"></div>
+    <div class="tablebox"><table id="alone"></table></div>
+  </section>
+
+  <section>
+    <h2>Forecasts, recorded before the outcome</h2>
+    <p class="lead">Each forecast was posted to a small contract on NEAR testnet with its due date. The contract refuses to settle one before that date. It cannot see mainnet data itself: it is a public notebook with timestamps, not a referee.</p>
+    <div id="forecasts"></div>
+  </section>
+
+  <footer>
+    <p>Snapshot through <span id="cutoff"></span>, fingerprint <code id="fp"></code>.</p>
+    <p>Check it yourself, with no keys and no network: <code>git clone https://github.com/JannetEkka/aftershock && cd aftershock && make verify</code></p>
+    <p>Data: NearBlocks, DefiLlama, GDELT. Models: <span id="models"></span>. Built at NEAR Hackathon. Not investment advice. <a href="https://github.com/JannetEkka/aftershock">Source (MIT)</a></p>
+  </footer>
+</div>
+<div id="caption"><span></span></div>
+<script src="data.js"></script>
+<script>
+(function(){
+"use strict";
+var A = window.AFTERSHOCK;
+if(!A){document.body.insertAdjacentHTML("afterbegin","<p style='padding:20px'>data.js is missing. Run <code>make replay</code>.</p>");return;}
+var NS="http://www.w3.org/2000/svg";
+var NAMES={price:"Price",txns:"Transactions",active_accounts:"Active accounts",new_accounts:"New accounts",dex_volume:"DEX volume",intents_volume:"Intents volume",tvl:"TVL",stablecoins:"Stablecoins",fees_usd:"Fees"};
+var STAMP={moved_usage:"MOVED USAGE",price_only:"PRICE ONLY",nothing:"NOTHING",not_tested:"NOT TESTED"};
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function el(n,a,p){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function pct(x,d){return x==null?"n/t":(x>0?"+":"")+(100*x).toFixed(d==null?1:d)+"%";}
+function num(v){if(v==null)return"";var a=Math.abs(v);return a>=1e9?(v/1e9).toFixed(2)+"B":a>=1e6?(v/1e6).toFixed(2)+"M":a>=1e4?Math.round(v).toLocaleString("en-US"):a>=100?v.toFixed(1):v.toFixed(2);}
+function safeUrl(u){return /^https?:\/\//.test(u||"")?u:"#";}
+
+var c=A.counts,t7=A.tests["7"].summary,S=A.series;
+var day0=Date.parse(S.dates[0]+"T00:00:00Z"),N=S.price.length;
+function dayIndex(iso){return Math.round((Date.parse(iso+"T00:00:00Z")-day0)/864e5);}
+$("range").textContent=S.dates[0].slice(0,4)+" to "+S.dates[1];
+$("nums").innerHTML="<span><b>"+c.events+"</b> news events.</span><span><b>"+c.moved_price+"</b> moved the price.</span><span class='u'><b>"+c.moved_usage+"</b> moved usage.</span><span>Chance alone: <b>5%</b> per measure.</span>";
+var evRate=100*c.moved_usage/Math.max(1,t7.events_tested),chRate=100*t7.chance_moved_usage;
+$("sub").textContent="An event “moved” a measure only if the change after it was bigger than on 95% of ordinary days. The usage stamp looks at five measures at once, so it lands on "+chRate.toFixed(1)+"% of ordinary days by chance; it landed on "+evRate.toFixed(1)+"% of news events. "+(evRate>chRate*1.5?"News events moved usage more often than ordinary days do.":"That is no more than chance: NEAR’s usage did not follow its headlines."));
+
+/* ---------- the strip ---------- */
+var svg=$("strip"),scroller=$("scroller"),PX=2.3,PADL=150,PADR=60,W=Math.round(PADL+N*PX+PADR),H=430;
+var Y={p0:50,p1:205,a0:235,a1:372,n0:378,n1:418};
+svg.setAttribute("viewBox","0 0 "+W+" "+H);svg.setAttribute("preserveAspectRatio","none");
+function sizeStrip(){var h=svg.getBoundingClientRect().height||H;svg.style.width=Math.round(W*h/H)+"px";$("ax2").style.top=(h*Y.a0/H-4)+"px";$("ax3").style.top=(h*Y.n0/H+8)+"px";}
+function xOf(i){return PADL+i*PX;}
+function logScale(arr,lo,y0,y1){var mx=0;arr.forEach(function(v){if(v>mx)mx=v;});var a=Math.log(lo),b=Math.log(mx*1.08);return function(v){return y1-(Math.log(Math.max(v,lo))-a)/(b-a)*(y1-y0);};}
+var yP=logScale(S.price,0.5,Y.p0,Y.p1),yA=logScale(S.active_accounts,300,Y.a0,Y.a1);
+var g=el("g",{},svg);
+for(var gy=20;gy<H;gy+=20)el("line",{x1:0,x2:W,y1:gy,y2:gy,"class":"gl"+(gy%100===0?" major":"")},g);
+for(var d=0;d<N;d++){var dt=new Date(day0+d*864e5);if(dt.getUTCDate()===1){var jan=dt.getUTCMonth()===0;el("line",{x1:xOf(d),x2:xOf(d),y1:0,y2:H,"class":"gl"+(jan?" major":"")},g);if(jan){var t=el("text",{x:xOf(d)+5,y:16,"class":"yr"},g);t.textContent=dt.getUTCFullYear();}}}
+var mxN=Math.max.apply(null,S.news.map(function(v){return v||0;}));
+var bars="";S.news.forEach(function(v,i){if(v){var h=(Y.n1-Y.n0)*v/mxN;bars+="M"+xOf(i).toFixed(1)+" "+Y.n1+"v"+(-h).toFixed(1)+"h"+PX+"v"+h.toFixed(1)+"z";}});
+el("path",{d:bars,"class":"news"},svg);
+function pathOf(arr,y,minV){var dd="",pen=false;arr.forEach(function(v,i){if(v==null||v<minV){pen=false;return;}dd+=(pen?"L":"M")+xOf(i).toFixed(1)+" "+y(v).toFixed(1);pen=true;});return dd;}
+var trP=el("path",{d:pathOf(S.price,yP,0.01),"class":"trace"},svg),trA=el("path",{d:pathOf(S.active_accounts,yA,1),"class":"trace"},svg);
+var pins=[],lane=0;
+A.events.forEach(function(ev){
+  var i=dayIndex(ev.start),x=xOf(i),p=el("g",{"class":"pin "+ev.stamp,tabindex:"0",role:"button","aria-label":ev.start+" "+STAMP[ev.stamp]},svg);
+  el("line",{x1:x,x2:x,y1:30,y2:Y.n1},p);el("circle",{cx:x,cy:30,r:ev.stamp==="nothing"?3:4.5},p);
+  if(ev.stamp==="moved_usage"||ev.stamp==="price_only"){
+    var label=STAMP[ev.stamp],w=label.length*7.4+14,yy=ev.stamp==="moved_usage"?Y.a0+18+(lane++%3)*24:Y.p0+6+(lane++%3)*24;
+    var s=el("g",{"class":"stamp "+ev.stamp},p);el("rect",{x:x+6,y:yy,width:w,height:18},s);var tx=el("text",{x:x+13,y:yy+13},s);tx.textContent=label;
+  }
+  el("rect",{x:x-7,y:20,width:14,height:H-20,"class":"hit"},p);
+  p.addEventListener("click",function(){showEvent(ev,p);});
+  p.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();showEvent(ev,p);}});
+  pins.push({x:x,node:p,ev:ev});
+});
+var raf=0;
+function draw(ms){
+  cancelAnimationFrame(raf);sizeStrip();
+  var still=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var view=scroller.clientWidth,scale=svg.getBoundingClientRect().width/W,maxScroll=scroller.scrollWidth-view;
+  [trP,trA].forEach(function(t){var L=t.getTotalLength();t._L=L;t.style.strokeDasharray=L;t.style.strokeDashoffset=still?0:L;});
+  pins.forEach(function(p){p.node.classList.toggle("on",!!still);});
+  if(still){scroller.scrollLeft=maxScroll;return;}
+  var t0=null;
+  function step(ts){
+    if(t0===null)t0=ts;var k=Math.min(1,(ts-t0)/ms),head=PADL+k*N*PX;
+    // the pen sits two thirds across the window; the paper moves under it
+    [trP,trA].forEach(function(t){t.style.strokeDashoffset=t._L*(1-k);});
+    pins.forEach(function(p){if(p.x<=head)p.node.classList.add("on");});
+    scroller.scrollLeft=Math.max(0,Math.min(maxScroll,head*scale-view*0.66));
+    if(k<1)raf=requestAnimationFrame(step);
+  }
+  raf=requestAnimationFrame(step);
+}
+window.aftershockDraw=draw;
+$("replay").addEventListener("click",function(){draw(14000);});
+window.addEventListener("resize",sizeStrip);
+
+function showEvent(ev,node){
+  pins.forEach(function(p){p.node.classList.remove("sel");});if(node)node.classList.add("sel");
+  var rows=Object.keys(ev.measures).map(function(m){var x=ev.measures[m],out=x.verdict==="up"||x.verdict==="down";
+    return "<tr><td>"+NAMES[m]+"</td><td class='"+(out?"out":"")+"'>"+pct(x.change)+"</td><td>"+(x.verdict==="not_tested"?"not tested (missing days)":out?"outside the ordinary band ("+x.verdict+")":"inside the ordinary band")+"</td></tr>";}).join("");
+  var heads=(ev.headlines||[]).map(function(h){return "<li><a href='"+esc(safeUrl(h.url))+"' rel='noopener noreferrer' target='_blank'>"+esc(h.title)+"</a> <span class='small'>"+esc(h.domain)+"</span></li>";}).join("");
+  $("event").innerHTML="<div class='card'><h3><span class='badge "+ev.stamp+"'>"+STAMP[ev.stamp]+"</span>"+ev.id+" · "+ev.start+(ev.end!==ev.start?" to "+ev.end:"")+" · "+esc(ev.type)+"</h3><p style='margin:6px 0 10px'>"+esc(ev.summary)+" <span class='small'>("+Math.round(ev.articles)+" articles in the spike)</span></p><div class='grid2'><div class='tablebox'><table style='min-width:0'><tr><th>Measure</th><th>7 days after vs 28 before</th><th style='text-align:left'>Against ordinary days</th></tr>"+rows+"</table><p class='small'>Stamp with a 3-day window: "+STAMP[ev.stamps_by_window["3"]]+". With 14 days: "+STAMP[ev.stamps_by_window["14"]]+".</p></div><div>"+(heads?"<ul class='plain'>"+heads+"</ul>":"<p class='small'>No headlines were saved for this spike.</p>")+"</div></div></div>";
+}
+var first=A.events.filter(function(e){return e.stamp==="moved_usage";}).pop()||A.events[A.events.length-1];
+if(first)showEvent(first,(pins.filter(function(p){return p.ev===first;})[0]||{}).node);
+
+/* ---------- event test table ---------- */
+$("testlead").textContent="For every event and measure: the change from the 28 days before to the days after. The same sum is run on every ordinary day. “Moved” means outside the middle 95% of ordinary days, so about 5% of events would pass by luck. All three windows are shown; the 7-day one is the main result.";
+var th="<tr><th>Measure</th>";["3","7","14"].forEach(function(a){th+="<th>"+a+" days: moved / tested</th>";});th+="<th>Chance (5% of tested, 7d)</th></tr>";
+var tb="";Object.keys(A.tests["7"].measures).forEach(function(m){tb+="<tr><td>"+NAMES[m]+"</td>";["3","7","14"].forEach(function(a){var x=A.tests[a].measures[m];tb+="<td>"+x.moved+" / "+x.tested+"</td>";});tb+="<td>"+A.tests["7"].measures[m].expected_by_chance+"</td></tr>";});
+tb+="<tr><td>Stamp: moved usage</td>";["3","7","14"].forEach(function(a){var s=A.tests[a].summary;tb+="<td>"+s.moved_usage+" / "+s.events_tested+"</td>";});tb+="<td>"+(t7.chance_moved_usage*t7.events_tested).toFixed(1)+" ("+chRate.toFixed(1)+"% of ordinary days)</td></tr>";
+tb+="<tr><td>Stamp: price only</td>";["3","7","14"].forEach(function(a){var s=A.tests[a].summary;tb+="<td>"+s.price_only+" / "+s.events_tested+"</td>";});tb+="<td>"+(t7.chance_price_only*t7.events_tested).toFixed(1)+" ("+(100*t7.chance_price_only).toFixed(1)+"% of ordinary days)</td></tr>";
+$("testtable").innerHTML=th+tb;
+$("testnote").textContent="Event rule: "+A.rule.event+". Ordinary days: "+t7.ordinary_days+" days with no news event in their window. Odds of seeing at least this many price moves by luck (7 days): "+(100*t7.p_moved_price).toFixed(1)+"%; for the usage stamp: "+(100*t7.p_moved_usage).toFixed(0)+"%. Caveats: a news spike is a rough stand-in for an influential event, events can overlap, and nearby days are not independent.";
+
+/* ---------- thesis ---------- */
+var HEAD={claim:"The claim",evidence_for:"Evidence for",evidence_against:"Evidence against",change_our_mind:"What would change our mind"};
+if(A.thesis.title)$("thesistitle").textContent=A.thesis.title;
+var th2="";Object.keys(HEAD).forEach(function(k){var ss=A.thesis.sections[k]||[];if(!ss.length)return;th2+="<h3>"+HEAD[k]+"</h3>";ss.forEach(function(s){
+  if(s.status==="kept")th2+="<p>"+esc(s.text)+s.claims.map(function(id){return "<span class='chip' data-claim='"+esc(id)+"' role='button' tabindex='0'>"+esc(id)+"</span>";}).join("")+"</p>";
+  else th2+="<p><span class='cut'>"+esc(s.text)+"</span><span class='why'>cut by the final check: "+esc(s.reason)+"</span></p>";});});
+if(A.thesis.note)th2+="<p>"+esc(A.thesis.note)+"</p>";
+$("thesis").innerHTML=th2;
+$("thesis").addEventListener("click",function(e){var id=e.target.getAttribute&&e.target.getAttribute("data-claim");if(!id)return;var n=$("claim-"+id);if(n){n.scrollIntoView({behavior:"smooth",block:"center"});n.classList.add("flash");setTimeout(function(){n.classList.remove("flash");},1600);}});
+
+/* ---------- claims ---------- */
+$("claimlead").textContent=c.claims_written+" claims written by the Bull ("+A.models.bull+") and the Bear ("+A.models.bear+"), each shown the other’s once to rebut. "+c.claims_kept+" kept, "+c.claims_removed+" removed: "+c.removed_by_code+" by the code’s recomputation and form checks, "+c.removed_by_examiner+" by the Examiner, which is always the other model family. Rule: "+A.rule.keep+".";
+$("claims").innerHTML=A.claims.map(function(cl){var kept=cl.status==="kept";
+  return "<div class='claim "+(kept?"":"removed")+"' id='claim-"+esc(cl.id)+"'><div><b>"+esc(cl.id)+"</b> <span class='t'>"+esc(cl.text)+"</span></div><div class='meta'>"+
+  (cl.recomputed!=null?"claimed "+esc(cl.figure)+" · recomputed "+(+cl.recomputed.toFixed(4))+" · "+esc(cl.how):"claimed "+esc(cl.figure))+
+  (cl.examiner?"<br>Examiner ("+esc(cl.examiner_model)+"): "+esc(cl.examiner.verdict)+". "+esc(cl.examiner.reason):"")+
+  (kept?"<br><b>KEPT</b>":"<br><b>REMOVED</b>: "+esc(cl.reason))+"</div></div>";}).join("");
+
+/* ---------- AI alone ---------- */
+$("score").innerHTML="<div><b>"+c.ai_alone_right+"</b>right</div><div><b>"+c.ai_alone_wrong+"</b>wrong</div><div><b>"+c.ai_alone_uncheckable+"</b>uncheckable</div><div class='small' style='max-width:420px;align-self:end'>Right = within 10% of our recomputed figure ("+c.ai_alone_within_1pct+" were within 1%, the bar our own claims must pass). With the check on, "+c.claims_kept+" of "+c.claims_written+" claims were kept and each kept figure is within 1%.</div>";
+$("alone").innerHTML="<tr><th>Claim made without data</th><th>Claimed</th><th>In the data</th><th>Score</th></tr>"+A.ai_alone.filter(function(b){return b.text;}).map(function(b){
+  return "<tr><td style='white-space:normal;min-width:260px'>"+esc(b.text)+"<br><span class='small'>"+esc(b.model)+"</span></td><td>"+(typeof b.figure==="number"?num(b.figure):"")+"</td><td>"+(b.actual!=null?num(b.actual):"")+"</td><td>"+esc(b.score)+"<br><span class='small'>"+esc(b.why)+"</span></td></tr>";}).join("");
+
+/* ---------- forecasts ---------- */
+var ch=A.chain,fh="";
+if(ch){
+  fh+="<p class='small'>Contract: <a href='"+esc(safeUrl(ch.explorer))+"' target='_blank' rel='noopener'>"+esc(ch.contract)+"</a> on NEAR testnet."+(ch.runs.length?" Run record (snapshot fingerprint and counts): <a href='"+esc(safeUrl(ch.runs[ch.runs.length-1].tx))+"' target='_blank' rel='noopener'>transaction</a>.":"")+"</p>";
+  ch.forecasts.forEach(function(f){var st=ch.settlements.filter(function(s){return s.id===f.id;});
+    fh+="<div class='card'><h3><span class='badge "+(f.side==="test"?"nothing":"")+"'>"+esc(f.side)+"</span>due "+esc(f.due)+"</h3><p style='margin:6px 0'>"+esc(f.statement)+"</p><p class='small'><a href='"+esc(safeUrl(f.tx))+"' target='_blank' rel='noopener'>recorded on NEAR testnet</a>"+
+    st.map(function(s){return " · settled: <b>"+(s.outcome?"TRUE":"FALSE")+"</b>, observed "+esc(s.observed)+" (<a href='"+esc(safeUrl(s.tx))+"' target='_blank' rel='noopener'>transaction</a>)";}).join("")+(st.length?"":" · not due yet")+"</p></div>";});
+}else{
+  fh+="<p class='small'>Not yet posted to the contract.</p>";
+  A.forecasts.filter(function(f){return f.status==="accepted";}).forEach(function(f){fh+="<div class='card'><h3><span class='badge'>"+esc(f.side)+"</span>due "+esc(f.due)+"</h3><p style='margin:6px 0'>"+esc(f.statement)+"</p></div>";});
+}
+$("forecasts").innerHTML=fh;
+$("cutoff").textContent=A.snapshot.cutoff;$("fp").textContent=A.snapshot.fingerprint;$("models").textContent=A.models.bull+" and "+A.models.bear;
+
+/* captions for the recorded demo: index.html?demo=1 lets a script set window.aftershockCaption("...") */
+window.aftershockCaption=function(t){var b=$("caption");b.style.display=t?"flex":"none";b.firstChild.textContent=t||"";};
+sizeStrip();
+if(!/[?&]demo=1/.test(location.search))setTimeout(function(){draw(14000);},350);
+})();
+</script>
+</body>
+</html>

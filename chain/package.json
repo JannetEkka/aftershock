@@ -1,0 +1,9 @@
+{
+  "name": "aftershock-chain",
+  "private": true,
+  "type": "module",
+  "description": "Testnet-only scripts for Aftershock's notebook contract.",
+  "dependencies": {
+    "near-api-js": "5.1.1"
+  }
+}

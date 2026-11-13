@@ -1,0 +1,10 @@
+{
+ "network": "testnet",
+ "contract": "aftershock-mwf5vao1.testnet",
+ "explorer": "https://testnet.nearblocks.io/address/aftershock-mwf5vao1.testnet",
+ "deploy_tx": "https://testnet.nearblocks.io/txns/3X4oN3ySfKvou8Pkmfqy6LGXvhNm29wqgnMAkEu5MHxD",
+ "init_tx": "https://testnet.nearblocks.io/txns/7vQhGHWXhHgZmtXajp7WmS4v6GriDBex2969b2mFXCPo",
+ "runs": [],
+ "forecasts": [],
+ "settlements": []
+}
