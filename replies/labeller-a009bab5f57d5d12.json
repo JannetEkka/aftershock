@@ -1,8 +1,0 @@
-{
- "role": "labeller",
- "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
- "attempt": 0,
- "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
- "user": "News spike from 2026-05-12 to 2026-05-12 (6 articles).\nHeadlines:\n- Bitcoin Hits the Pause Button at $80k (www.actionforex.com)\n- Stratis One Day Trading Volume Tops $923 . 60 Thousand ( STRAX ) (www.dailypolitical.com)\n- Stratis ( STRAX ) Market Capitalization Tops $21 . 46 Million (www.tickerreport.com)\n- Theta Fuel ( TFUEL ) 1 - Day Volume Tops $2 . 48 Million (www.dailypolitical.com)\n- Ethereum One Day Volume Reaches $15 . 98 Billion ( ETH ) (www.dailypolitical.com)",
- "reply": "{\"type\": \"market-wide\", \"summary\": \"Bitcoin holds $80k while Stratis, Theta Fuel and Ethereum report higher daily volume and market caps.\"}"
-}

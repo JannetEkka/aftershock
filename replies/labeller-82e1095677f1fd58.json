@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2023-03-06 to 2023-03-06 (12 articles).\nHeadlines:\n- ROCKET YOUR RETURNS IN 2023 WITH NEAR PROTOCOL ( NEAR ) ALGORAND ( ALGO ) AND THE TMS NETWORK ( TMSN ); TMSN RAISES $500K IN 2 WEEKS (www.newsbtc.com)\n- METABORA SINGAPORE Signs MOU with NEAR Protocol to Enhance Web3 Cross - Chain Ecosystem (www.tmcnet.com)\n- NEAR Protocol aims straight at the Korean game market with BORA , Kakao Game Web3 arm (www.tmcnet.com)",
+ "reply": "{\"type\": \"partnership\", \"summary\": \"Metabora Singapore signs MOU with NEAR Protocol to enhance Web3 cross-chain ecosystem, while NEAR targets Korean game market with BORA and Kakao Web3 arm.\"}"
+}

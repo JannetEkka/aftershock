@@ -1,8 +1,0 @@
-{
- "role": "labeller",
- "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
- "attempt": 0,
- "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
- "user": "News spike from 2022-01-04 to 2022-01-04 (6 articles).\nHeadlines:\n- Bitcoin ( BTC ) Tests Multi - Week Support , Fantom ( FTM ) and Near Protocol ( NEAR ) Rally Further (www.dailyfx.com)\n- Bitcoin ( BTC ) Tests Multi - Week Support , Fantom ( FTM ) and Nea ... (menafn.com)\n- Why These 3 Cryptocurrencies Skyrocketed More Than 14 % Today (www.fool.com)\n- Cryptocurrency prices today : Crypto rates fall as trade volumes remain weak (www.indiatoday.in)",
- "reply": "{\"type\": \"market-wide\", \"summary\": \"Bitcoin, Fantom, and NEAR rallied while broader crypto markets fell on Jan 4, 2022, with mixed price movements and weak trade volumes.\"}"
-}

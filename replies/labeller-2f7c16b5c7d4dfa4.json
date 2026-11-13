@@ -1,8 +1,0 @@
-{
- "role": "labeller",
- "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
- "attempt": 0,
- "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
- "user": "News spike from 2022-02-17 to 2022-02-17 (7 articles).\nHeadlines:\n- cannabis : CannaDAO to launch platform for cannabis industry (economictimes.indiatimes.com)\n- CannaDAO launches first decentralized cannabis platform (invezz.com)\n- Bitcoin and Ethereum slip back on report of approaching storm cloud ; Shiba Inu jumps (www.proactiveinvestors.com)\n- API3 price gains 55 % after new partnerships and exchange listings attract investors (cointelegraph.com)",
- "reply": "{\"type\": \"other\", \"summary\": \"CannaDAO launches cannabis platform; API3 gains on exchange listings; Bitcoin, Ethereum, and Shiba Inu move.\"}"
-}

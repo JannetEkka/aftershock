@@ -11,9 +11,9 @@ from datetime import date, timedelta
 from . import claims, events, eventtest, llm, roles, snapshot
 from .snapshot import ROOT
 
-BULL, BEAR = "glm", "nemotron"      # the two families; each side's claims are examined by the other family
+BULL, BEAR = "open", "nvidia"        # the two seats; each side's claims are examined by the other seat
 FAMILY = {"bull": BULL, "bear": BEAR}
-LABELLER, JUDGE = "nemotron", "glm"
+LABELLER, JUDGE = "nvidia", "open"
 BASELINE_RIGHT = 0.10                   # AI alone, from memory: "right" = within 10% of our data (1% also reported)
 
 
@@ -58,7 +58,7 @@ def write_claims(side, role, system, user, lo, hi, start):
     out = []
     for i, c in enumerate((o or {}).get("claims", []), start):
         c = dict(c) if isinstance(c, dict) else {"text": str(c)}
-        c["id"], c["side"] = f"{side.upper()}{i}", side
+        c["id"], c["side"], c["writer_model"] = f"{side.upper()}{i}", side, (o or {}).get("_model")
         out.append(c)
     return out
 
@@ -77,8 +77,8 @@ def check_claim(c, ctx, labels, headlines):
     return {**{k: c.get(k) for k in ("id", "side", "kind", "measure", "event_id", "after_days", "period", "period_b", "figure", "text", "rebuts")},
             "event_ids": claims.cited_events(c) if isinstance(c.get("event_ids", []), list) else [],
             "recomputed": code["recomputed"], "how": code["how"], "code_check": code["status"],
-            "examiner": exam, "examiner_model": llm.MODELS[llm.OTHER[FAMILY[c["side"]]]] if exam else None,
-            "writer_model": llm.MODELS[FAMILY[c["side"]]], "status": status, "reason": reason, "context_numbers": extra}
+            "examiner": {k: exam[k] for k in ("verdict", "reason")} if exam else None, "examiner_model": exam["_model"] if exam else None,
+            "writer_model": c.get("writer_model"), "status": status, "reason": reason, "context_numbers": extra}
 
 
 def score_baseline(ctx):
@@ -86,7 +86,7 @@ def score_baseline(ctx):
     for fam in (BULL, BEAR):
         o = llm.ask_json("ai_alone", fam, roles.BASE_SYS, roles.BASE_USER, roles.base_valid)
         for c in (o or {}).get("claims", []):
-            row = {"model": llm.MODELS[fam], "text": c.get("text"), "kind": c.get("kind"), "measure": c.get("measure"),
+            row = {"model": o["_model"], "text": c.get("text"), "kind": c.get("kind"), "measure": c.get("measure"),
                    "period": c.get("period"), "period_b": c.get("period_b"), "figure": c.get("figure"), "actual": None}
             form = {**c, "event_ids": [], "text": c.get("text") if 10 <= len(str(c.get("text"))) <= 400 else "x" * 10}
             if c.get("kind") not in ("period_mean", "period_change") or claims.validate_form(form, ctx):
@@ -101,7 +101,7 @@ def score_baseline(ctx):
                                why=f"off by {100 * err:.1f}%" if err != float("inf") else "actual is zero")
             out.append(row)
         if o is None:
-            out.append({"model": llm.MODELS[fam], "text": None, "score": "no_valid_reply", "why": "the model gave no valid reply twice"})
+            out.append({"model": "/".join(llm.SEATS[fam]), "text": None, "score": "no_valid_reply", "why": "the model gave no valid reply twice"})
     return out
 
 
@@ -200,8 +200,9 @@ def main():
                  "test": f"change from the {eventtest.BEFORE} days before to the N days after; moved = outside the middle 95% of ordinary days",
                  "keep": "figure within 1% of the recomputation, cited events exist, Examiner (other model family) says supported",
                  "ai_alone_right": f"within {int(100 * BASELINE_RIGHT)}% of the recomputed figure"},
-        "models": {"bull": llm.MODELS[BULL], "bear": llm.MODELS[BEAR], "labeller": llm.MODELS[LABELLER], "judge": llm.MODELS[JUDGE],
-                   "examiner": "the other family from the claim's writer"},
+        "models": {**{role: sorted({c["model"] for c in llm.calls if c["role"].startswith(role)}) for role in
+                      ("bull", "bear", "labeller", "examiner", "judge", "ai_alone", "forecaster")},
+                   "rule": "a claim's Examiner is always the other seat: NVIDIA's Nemotron for claims written by another lab's model, and the reverse"},
         "counts": counts,
         "tests": {a: {"summary": r["summary"], "measures": r["measures"]} for a, r in tests.items()},
         "events": [{**{k: ev[k] for k in ("id", "start", "end", "days", "peak", "articles")}, **labels[ev["id"]],

@@ -15,9 +15,13 @@ from .snapshot import ROOT
 
 REPLIES = os.path.join(ROOT, "replies")
 URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-# Two different model families. The Examiner of a claim is always the family that did NOT write it.
-MODELS = {"glm": "z-ai/glm-5.3-flash", "nemotron": "nvidia/nemotron-3.5-lightning-30b-a3b"}
-OTHER = {"glm": "nemotron", "nemotron": "glm"}
+# Two seats from different model families. The Examiner of a claim is always the seat that did NOT write it.
+# "nvidia" is NVIDIA's own Nemotron. "open" is a model from another lab: the free endpoints go up and down,
+# so the seat tries these in order and the recording stores which one answered.
+SEATS = {"open": ["z-ai/glm-5.3-flash", "minimaxai/minimax-m3.1-flash", "stepfun-ai/step-5-preview"],
+         "nvidia": ["nvidia/nemotron-3.5-lightning-30b-a3b"]}
+OTHER = {"open": "nvidia", "nvidia": "open"}
+DEADLINE = 600  # seconds allowed for one streamed reply before the next model is tried
 
 calls = []   # log of every call in this run: role, family, attempt, valid, error
 used = set()  # reply files used in this run
@@ -31,51 +35,63 @@ def mode():
     return os.environ.get("AFTERSHOCK_MODE", "replay")
 
 
-def _path(role, family, system, user, attempt):
-    key = hashlib.sha256(json.dumps([MODELS[family], system, user, attempt]).encode()).hexdigest()[:16]
+def _path(role, seat, system, user, attempt):
+    key = hashlib.sha256(json.dumps([seat, system, user, attempt]).encode()).hexdigest()[:16]
     return os.path.join(REPLIES, f"{role}-{key}.json")
 
 
-def chat(role, family, system, user, attempt=0, max_tokens=16000):
-    """Return the model's reply text. Reads the recording if there is one; calls the API only in live mode."""
-    path = _path(role, family, system, user, attempt)
+def _stream(model, system, user, max_tokens, key):
+    """One streamed call. Reasoning tokens are dropped; only the answer is kept."""
+    body = json.dumps({"model": model, "temperature": 0, "max_tokens": max_tokens, "stream": True,
+                       "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}).encode()
+    req = urllib.request.Request(URL, data=body, headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    parts, t0, done = [], time.time(), False
+    with urllib.request.urlopen(req, timeout=120) as r:
+        for line in r:
+            line = line.decode("utf-8", "replace").strip()
+            if line == "data: [DONE]":
+                done = True
+                break
+            if line.startswith("data:"):
+                ch = json.loads(line[5:]).get("choices") or [{}]
+                parts.append((ch[0].get("delta") or {}).get("content") or "")
+            if time.time() - t0 > DEADLINE:
+                raise TimeoutError(f"no complete reply in {DEADLINE}s")
+    reply = "".join(parts)
+    if not done or not reply.strip():
+        raise ValueError("stream ended without an answer")
+    return reply
+
+
+def chat(role, seat, system, user, attempt=0, max_tokens=16000):
+    """Return (reply text, model that wrote it). Reads the recording if there is one; calls the API only in live mode."""
+    path = _path(role, seat, system, user, attempt)
     used.add(os.path.basename(path))
     if os.path.exists(path):
         with open(path) as f:
-            return json.load(f)["reply"]
+            d = json.load(f)
+        return d["reply"], d["model"]
     if mode() != "live":
         raise ReplayMissing(f"no recorded reply for role '{role}' ({os.path.basename(path)}). "
                             "The snapshot or the prompts changed since the recording; run `make live` with a key.")
-    # Streamed, because long answers otherwise hit the gateway's 30-second limit. Reasoning tokens are dropped.
-    body = json.dumps({"model": MODELS[family], "temperature": 0, "max_tokens": max_tokens, "stream": True,
-                       "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]}).encode()
     key = os.environ.get("NVIDIA_API_KEY")
     if not key:
         raise SystemExit("STOPPED: live mode needs NVIDIA_API_KEY (a free key from build.nvidia.com).")
     err = None
-    for i in range(5):
-        try:
-            req = urllib.request.Request(URL, data=body, headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
-            parts = []
-            with urllib.request.urlopen(req, timeout=240) as r:
-                for line in r:
-                    line = line.decode("utf-8", "replace").strip()
-                    if not line.startswith("data:") or line == "data: [DONE]":
-                        continue
-                    ch = json.loads(line[5:]).get("choices") or [{}]
-                    parts.append((ch[0].get("delta") or {}).get("content") or "")
-            reply = "".join(parts)
-            break
-        except Exception as e:
-            err = e
-            time.sleep(10 * (i + 1))
-    else:
-        raise SystemExit(f"STOPPED: model call for role '{role}' failed 5 times: {err!r}")
-    os.makedirs(REPLIES, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump({"role": role, "model": MODELS[family], "attempt": attempt, "system": system, "user": user, "reply": reply}, f, indent=1)
-        f.write("\n")
-    return reply
+    for rnd in range(3):
+        for model in SEATS[seat]:
+            try:
+                reply = _stream(model, system, user, max_tokens, key)
+            except Exception as e:
+                err = f"{model}: {e!r}"
+                continue
+            os.makedirs(REPLIES, exist_ok=True)
+            with open(path, "w") as f:
+                json.dump({"role": role, "seat": seat, "model": model, "attempt": attempt, "system": system, "user": user, "reply": reply}, f, indent=1)
+                f.write("\n")
+            return reply, model
+        time.sleep(20 * (rnd + 1))
+    raise SystemExit(f"STOPPED: model call for role '{role}' failed on every model of seat '{seat}': {err}")
 
 
 def extract_json(text):
@@ -111,15 +127,18 @@ def extract_json(text):
     return None
 
 
-def ask_json(role, family, system, user, validate, max_tokens=16000):
+def ask_json(role, seat, system, user, validate, max_tokens=16000):
     """Ask for JSON and validate it. `validate(obj)` returns an error string or None.
     An invalid reply is retried once with the error shown; a second failure returns None."""
     error = None
     for attempt in (0, 1):
         prompt = user if attempt == 0 else f"{user}\n\nYour previous reply was rejected by the validator: {error}\nReply again with valid JSON only."
-        obj = extract_json(chat(role, family, system, prompt, attempt, max_tokens))
+        reply, model = chat(role, seat, system, prompt, attempt, max_tokens)
+        obj = extract_json(reply)
         error = "reply is not a JSON object" if obj is None else validate(obj)
-        calls.append({"role": role, "family": family, "model": MODELS[family], "attempt": attempt, "valid": error is None, "error": error})
+        calls.append({"role": role, "seat": seat, "model": model, "attempt": attempt, "valid": error is None, "error": error})
+        if error is None:
+            obj["_model"] = model
         if error is None:
             return obj
     return None
@@ -127,7 +146,7 @@ def ask_json(role, family, system, user, validate, max_tokens=16000):
 
 def warm(jobs, workers=8):
     """Live mode only: make first-attempt calls in parallel so the slow part is not one long queue.
-    `jobs` is a list of (role, family, system, user). The normal, ordered pass then reads the recordings."""
+    `jobs` is a list of (role, seat, system, user). The normal, ordered pass then reads the recordings."""
     if mode() != "live" or not jobs:
         return
     from concurrent.futures import ThreadPoolExecutor

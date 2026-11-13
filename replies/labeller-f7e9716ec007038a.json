@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2023-06-26 to 2023-06-26 (38 articles).\nHeadlines:\n- NEAR Protocol ( NEAR ) Price Reaches $1 . 59 on Major Exchanges (www.modernreaders.com)\n- NEAR Protocol ( NEAR ) Trading Up 10 . 2 % Over Last 7 Days (theenterpriseleader.com)\n- NEAR Soars 12 % Following a Partnership With Alibaba (biztoc.com)\n- NEAR Foundation Partners With Alibaba Cloud to Accelerate Web3 Growth in Asia (biztoc.com)\n- G999 Hits Self Reported Market Capitalization of $37 . 59 Million ( G999 ) (theenterpriseleader.com)\n- Apollo Currency ( APL ) Hits Self Reported Market Capitalization of $4 . 36 Million (theenterpriseleader.com)\n- Kava 24 - Hour Trading Volume Tops $154 . 84 Million ( KAVA ) (www.wkrb13.com)\n- Sapphire ( SAPP ) One Day Volume Hits $9 , 365 . 86 (theenterpriseleader.com)\n- Apollo Currency Tops 24 Hour Volume of $465 , 277 . 84 ( APL ) (www.dailypolitical.com)",
+ "reply": "{\"type\": \"partnership\", \"summary\": \"NEAR Protocol partners with Alibaba Cloud to accelerate Web3 growth in Asia, surging 12% in price.\"}"
+}

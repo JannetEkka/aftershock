@@ -1,8 +1,0 @@
-{
- "role": "labeller",
- "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
- "attempt": 0,
- "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
- "user": "News spike from 2024-02-25 to 2024-02-25 (34 articles).\nHeadlines:\n- NEAR Protocol ( NEAR ) Price Reaches $3 . 70 on Major Exchanges (www.kopsource.com)\n- Near Protocol Price Prediction : NEAR pumps 10 % as investors envision another buy opportunity here (www.fxstreet.com)\n- G999 Price Up 13 . 2 % Over Last Week ( G999 ) (www.kopsource.com)\n- Apollo Currency ( APL ) Price Reaches $0 . 0001 on Top Exchanges (www.modernreaders.com)\n- holoride ( RIDE ) Price Down 0 . 9 % Over Last Week (www.themarketsdaily.com)\n- Velas ( VLX ) Trading 20 . 3 % Lower Over Last 7 Days (www.tickerreport.com)\n- Beldex ( BDX ) 1 - Day Volume Reaches $2 . 65 Million (www.kopsource.com)\n- Theta Fuel Hits Market Capitalization of $323 . 58 Million ( TFUEL ) (www.modernreaders.com)\n- Qtum ( QTUM ) Tops 24 Hour Volume of $64 . 26 Million (www.tickerreport.com)",
- "reply": "{\"type\": \"market-wide\", \"summary\": \"NEAR Protocol price reaches $3.70 and pumps 10% on buy opportunity speculation.\"}"
-}

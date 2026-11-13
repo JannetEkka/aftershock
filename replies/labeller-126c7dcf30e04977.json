@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2022-09-02 to 2022-09-02 (7 articles).\nHeadlines:\n- Meme Mania Grips Cryptoverse . How Big Eyes Coin , Cardano and near protocol aim to decode DeFi and Cryptocurrency for beginners (www.bangladeshsun.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Meme mania grips the crypto market as Big Eyes Coin, Cardano, and NEAR Protocol aim to decode DeFi and cryptocurrency for beginners.\"}"
+}
