@@ -1,0 +1,87 @@
+{
+ "network": "testnet",
+ "contract": "aftershock-mwf5vao1.testnet",
+ "explorer": "https://testnet.nearblocks.io/address/aftershock-mwf5vao1.testnet",
+ "deploy_tx": "https://testnet.nearblocks.io/txns/3X4oN3ySfKvou8Pkmfqy6LGXvhNm29wqgnMAkEu5MHxD",
+ "init_tx": "https://testnet.nearblocks.io/txns/7vQhGHWXhHgZmtXajp7WmS4v6GriDBex2969b2mFXCPo",
+ "runs": [
+  {
+   "run": 0,
+   "fingerprint": "fc8d31eb23262c506751abe40fe00f9ee796056d7b535a254df73948a4736e82",
+   "cutoff": "2026-11-11",
+   "tx": "https://testnet.nearblocks.io/txns/3PehTnLaHFyr5rAxV3k57WA9eS2nowdWLzYxAVGnmCvP"
+  }
+ ],
+ "forecasts": [
+  {
+   "id": 0,
+   "local": "F1",
+   "run": 0,
+   "side": "bull",
+   "statement": "Mean daily price over the 7 days ending 2026-12-11 will be above 4.0000.",
+   "measure": "price",
+   "direction": "above",
+   "threshold": 4,
+   "due": "2026-12-11",
+   "tx": "https://testnet.nearblocks.io/txns/DCCD2g6rzk7HPNFcbp6zB2yEJPRYevS6HACKTTz5w6Mm"
+  },
+  {
+   "id": 1,
+   "local": "F2",
+   "run": 0,
+   "side": "bull",
+   "statement": "Mean daily Intents volume over the 7 days ending 2026-12-11 will be above 140000000.",
+   "measure": "intents_volume",
+   "direction": "above",
+   "threshold": 140000000,
+   "due": "2026-12-11",
+   "tx": "https://testnet.nearblocks.io/txns/BcqWGQn3sQZczS3kuskJHVT1pEfQb6GGjGgNrWZ9x5En"
+  },
+  {
+   "id": 2,
+   "local": "F3",
+   "run": 0,
+   "side": "bear",
+   "statement": "Mean daily price over the 7 days ending 2026-12-11 will be below 3.0000.",
+   "measure": "price",
+   "direction": "below",
+   "threshold": 3,
+   "due": "2026-12-11",
+   "tx": "https://testnet.nearblocks.io/txns/CBut7SCKPv2VR4et66BFxB9PvH49KnKBYg6wWAdST7kv"
+  },
+  {
+   "id": 3,
+   "local": "F4",
+   "run": 0,
+   "side": "bear",
+   "statement": "Mean daily active accounts over the 7 days ending 2027-02-09 will be below 50000.",
+   "measure": "active_accounts",
+   "direction": "below",
+   "threshold": 50000,
+   "due": "2027-02-09",
+   "tx": "https://testnet.nearblocks.io/txns/6AaGvDdBDaXtDjHYQBPhZh2Azxz9frCXmneDBt8pDpLG"
+  },
+  {
+   "id": 4,
+   "local": "TEST",
+   "run": 0,
+   "side": "test",
+   "statement": "TEST of the settle step, not a real forecast: mean daily price over the 7 days ending 2026-11-10 will be above 1.",
+   "measure": "price",
+   "direction": "above",
+   "threshold": 1,
+   "due": "2026-11-10",
+   "tx": "https://testnet.nearblocks.io/txns/DrLhT5YjxkuiB8qLbzxp3kxSn54cjq7pd24HEdb9WepH"
+  }
+ ],
+ "settlements": [
+  {
+   "id": 4,
+   "settler": "aftershock-mwf5vao1.testnet",
+   "outcome": true,
+   "observed": 3.73475,
+   "fingerprint": "fc8d31eb23262c506751abe40fe00f9ee796056d7b535a254df73948a4736e82",
+   "tx": "https://testnet.nearblocks.io/txns/CdEB6c93e8LqFQDnXduiWqppDqc1qUytZBfoiobazAHf"
+  }
+ ]
+}

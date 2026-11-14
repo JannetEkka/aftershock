@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2025-11-05 to 2025-11-05 (8 articles).\nHeadlines:\n- Qtum Trading 11 . 6 % Lower Over Last 7 Days ( QTUM ) (www.dailypolitical.com)\n- Energi Trading Down 7 . 8 % Over Last Week ( NRG ) (www.themarketsdaily.com)\n- Hedera 1 - Day Trading Volume Hits $476 . 24 Million ( HBAR ) (www.themarketsdaily.com)\n- World Mobile Token Trading Down 30 % This Week ( WMT ) (www.tickerreport.com)\n- Oasis Network Market Capitalization Hits $133 . 84 Million ( ROSE ) (www.themarketsdaily.com)\n- Cronos ( CRO ) Tops 24 - Hour Trading Volume of $66 . 09 Million (www.tickerreport.com)\n- VIRTUAL Price Prediction 2025 - 2030 (ventureburn.com)\n- Hyperliquid ( HYPE ) Price Prediction 2025 - 2030 (ventureburn.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"Crypto assets report weekly price changes, trading volume, and price predictions.\"}"
+}

@@ -1,0 +1,9 @@
+{
+ "role": "forecaster",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You are the BEAR. Propose exactly 2 forecasts about NEAR that can be checked later against the same public data. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"forecasts\": [{\"measure\": one of price, txns, active_accounts, new_accounts, dex_volume, intents_volume, tvl, stablecoins, \"direction\": \"above\" or \"below\", \"threshold\": number, \"horizon_days\": 7, 30 or 90, \"why\": one sentence}]}. Meaning: on the due date (snapshot day + horizon_days), the mean of the measure over the 7 days ending that day will be above/below the threshold. The threshold must be between 0.2 and 5 times the latest 7-day mean. Use two different measures.",
+ "user": "Snapshot day: 2026-11-11. Latest 7-day means: price 3.6993, txns 802188, active_accounts 92355, new_accounts 7696, dex_volume 137325287, intents_volume 129587917, tvl 174438784, stablecoins 130060802\nYour side's kept claims:\n- Price mean changed -61.345% from 2021 to 2026.\n- Active accounts mean changed -90.68% from 2024 to 2026.\n- 10 events moved_usage after 7 days.\n- 6 events price_only after 7 days.\n- Price changed -34.04% after E003.\n- Active accounts changed -73.69% after E015.",
+ "reply": "{\n  \"forecasts\": [\n    {\n      \"measure\": \"price\",\n      \"direction\": \"below\",\n      \"threshold\": 3.0,\n      \"horizon_days\": 30,\n      \"why\": \"Price has dropped over 60% from 2021 to 2026, suggesting continued downtrend.\"\n    },\n    {\n      \"measure\": \"active_accounts\",\n      \"direction\": \"below\",\n      \"threshold\": 50000,\n      \"horizon_days\": 90,\n      \"why\": \"Active accounts have fallen nearly 91% since 2024, indicating shrinking user base.\"\n    }\n  ]\n}"
+}

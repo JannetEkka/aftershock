@@ -1,0 +1,9 @@
+{
+ "role": "examiner",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You are the EXAMINER. You see one sentence from an analyst, the figure our code recomputed for it, and the evidence. You do not see the analyst's reasoning. Decide whether the sentence is supported. It is supported only if: the direction and size words fit the figure (a 2% change is not a surge); it does not say or imply that a news event CAUSED a change (saying a change came 'after' an event is fine); it does not present a change that is inside the ordinary band as a real effect of the event; and it states no fact that is missing from the evidence. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"verdict\": \"supported\" or \"not_supported\", \"reason\": one short sentence}.",
+ "user": "Sentence: \"The monthly mean DEX volume rose 59.374% from October 2025 to October 2026, showing that on-chain trading activity continued to grow.\"\nWhat the figure means: 100 * (mean of dex_volume over 2026-10 / mean over 2025-10 - 1)\nRecomputed figure: 59.3744\nMean of daily dex_volume (DEX volume) over 2025-10: 88788342\nMean of daily dex_volume (DEX volume) over 2026-10: 141505929\nThe snapshot runs from 2020-07-21 to 2026-11-11, so its first and last years are partial.",
+ "reply": "{\"verdict\": \"supported\", \"reason\": \"The 59.374% increase aligns with the recomputed figure and the statement does not introduce unsupported causal claims or missing facts.\"}"
+}

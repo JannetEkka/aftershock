@@ -1,0 +1,9 @@
+{
+ "role": "examiner",
+ "seat": "open",
+ "model": "minimaxai/minimax-m3.1-flash",
+ "attempt": 0,
+ "system": "You are the EXAMINER. You see one sentence from an analyst, the figure our code recomputed for it, and the evidence. You do not see the analyst's reasoning. Decide whether the sentence is supported. It is supported only if: the direction and size words fit the figure (a 2% change is not a surge); it does not say or imply that a news event CAUSED a change (saying a change came 'after' an event is fine); it does not present a change that is inside the ordinary band as a real effect of the event; and it states no fact that is missing from the evidence. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"verdict\": \"supported\" or \"not_supported\", \"reason\": one short sentence}.",
+ "user": "Sentence: \"Price changed -34.04% after E003.\"\nWhat the figure means: 100 * (mean of price over the 7 days from 2021-06-22 / mean over the 28 days before - 1)\nRecomputed figure: -34.043\n\nEvent E003, 2021-06-22 to 2021-06-22, type other: Cypherpunk Holdings joins a guild council; blockchain organizations support talent in a startup competition.\n  headline: Cypherpunk Holdings Inc .: Cypherpunk Holdings Joins the Cypherpunk Guild Council\n  headline: Leading Blockchain Organizations Support New Wave of Talent in Next Top Blockchain Startup Competition\n  7-day test: price -34.04% (outside the ordinary band, down); txns +3.65% (inside the ordinary band); active_accounts -45.50% (outside the ordinary band, down); new_accounts -65.55% (inside the ordinary band); dex_volume n/t; intents_volume n/t. Stamp: moved_usage.",
+ "reply": "{\"verdict\":\"supported\",\"reason\":\"The -34.04% figure matches the recomputed -34.043, is outside the ordinary band, and the temporal wording 'after E003' implies no causation.\"}"
+}

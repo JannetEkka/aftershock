@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2025-11-15 to 2025-11-17 (11 articles).\nHeadlines:\n- OceanPal Inc . Announces NASDAQ Ticker Change from OP to SVRN (www.finanznachrichten.de)\n- OceanPal : Announces SovereignAI Total Treasury Holdings Exceed $133 Million of NEAR ; Ticker Symbol Change to SVRN (www.marketscreener.com)\n- NASDAQ - Listed SVRN Discloses $133M Treasury Holdings of NEAR (www.coinspeaker.com)\n- Qtum Price Tops $1 . 74 on Top Exchanges ( QTUM ) (www.tickerreport.com)\n- Ontology ( ONT ) Hits Self Reported Market Capitalization of $70 . 24 Million (www.dailypolitical.com)\n- Divi Achieves Market Cap of $7 . 08 Million ( DIVI ) (www.dailypolitical.com)\n- TerraClassicUSD Reaches 24 Hour Volume of $3 . 35 Million ( USTC ) (www.themarketsdaily.com)\n- Cardano ( ADA ) Price Prediction 2025 - 2030 (ventureburn.com)",
+ "reply": "{\"type\": \"other\", \"summary\": \"OceanPal rebrands to SVRN, disclosing $133 million in NEAR treasury holdings.\"}"
+}

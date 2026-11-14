@@ -1,0 +1,15 @@
+{
+ "cutoff": "2026-11-11",
+ "fetched_at": "2026-11-13T08:56:53Z",
+ "files": {
+  "daily.csv": "47b5485a82311b0807c81c19506eef1dc5aaf5684ef9c8f3eab90c5ba5cea14b",
+  "raw/defillama_dex.json": "b185ea8298661331abd59b4948ab7886523a4eaa7b8174c870bbbd8b34540652",
+  "raw/defillama_intents.json": "7afbae52144aebb470e49260137acdcefd1074f321833cc355aad7df777b8465",
+  "raw/defillama_stablecoins.json": "9c5e29437056068ded44a11d4f3c900b67e7d6299b282a4ea7ce8f3cce394feb",
+  "raw/defillama_tvl.json": "e39851bd83d363de8eef53c9d751ee4d48ca25aa9522f8c897a79d8c15f98385",
+  "raw/gdelt_headlines.json": "5f949b49ac2374cf373e5c554c385a6dc1ef95bd97445f840f32768a5a13e671",
+  "raw/gdelt_timeline.json": "95aa0dcd857f8b117665281df3ee5376a7ce6a0177694e73de39138d99082e65",
+  "raw/nearblocks_charts.json": "6a74ed0c12080bcfba0e8b333e3efe2ace87933e0b8efd811983b0673971cad4"
+ },
+ "fingerprint": "fc8d31eb23262c506751abe40fe00f9ee796056d7b535a254df73948a4736e82"
+}

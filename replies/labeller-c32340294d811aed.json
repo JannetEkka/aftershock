@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2023-06-22 to 2023-06-22 (36 articles).\nHeadlines:\n- NEAR Protocol Market Cap Tops $1 . 23 Billion ( NEAR ) (www.dailypolitical.com)\n- NEAR Protocol Trading Up 14 . 1 % Over Last 7 Days ( NEAR ) (www.wkrb13.com)\n- Sparklo ( SPRK ) Gains More While NEAR Protocol ( NEAR ) and Fantom ( FTM ) Shows Positive Market Signs (www.theportugalnews.com)\n- G999 ( G999 ) Price Tops $0 . 0033 on Exchanges (www.dailypolitical.com)\n- G999 ( G999 ) 24 - Hour Trading Volume Reaches $6 , 690 . 57 (www.dailypolitical.com)\n- Beldex ( BDX ) 1 - Day Trading Volume Hits $6 . 85 Million (www.dailypolitical.com)\n- Sapphire ( SAPP ) Reaches Self Reported Market Cap of $39 . 00 Million (www.modernreaders.com)\n- holoride ( RIDE ) Price Hits $0 . 0190 on Top Exchanges (www.modernreaders.com)\n- Kava ( KAVA ) 1 - Day Trading Volume Tops $45 . 57 Million (www.dailypolitical.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"NEAR Protocol's market cap reached $1.23 billion and trading rose 14.1% over 7 days.\"}"
+}

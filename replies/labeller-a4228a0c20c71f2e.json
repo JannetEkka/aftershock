@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2025-12-27 to 2025-12-27 (8 articles).\nHeadlines:\n- NEAR Protocol Price Tops $1 . 55 on Major Exchanges ( NEAR ) (www.themarketsdaily.com)\n- Beldex Self Reported Market Cap Reaches $742 . 77 Million ( BDX ) (www.tickerreport.com)\n- Beldex Price Up 3 . 2 % Over Last Week ( BDX ) (www.dailypolitical.com)\n- Qtum ( QTUM ) Price Reaches $1 . 30 on Top Exchanges (www.dailypolitical.com)\n- Hedera Trading Down 0 . 1 % Over Last 7 Days ( HBAR ) (www.themarketsdaily.com)\n- Cosmos Price Hits $2 . 04 on Top Exchanges ( ATOM ) (www.themarketsdaily.com)\n- Ethereum ( ETH ) Trading 1 . 8 % Lower This Week (www.themarketsdaily.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"NEAR tops $1.55, ETH down 1.8% weekly, Cosmos $2.04, Qtum $1.30, Hedera down 0.1%, and Beldex up 3.2% weekly with $742.77M market cap.\"}"
+}

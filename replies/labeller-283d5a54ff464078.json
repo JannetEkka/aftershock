@@ -1,0 +1,9 @@
+{
+ "role": "labeller",
+ "seat": "nvidia",
+ "model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+ "attempt": 0,
+ "system": "You label a news event about NEAR Protocol from its headlines. Reply with one JSON object only: no prose before or after it, no markdown fences. Form: {\"type\": one of upgrade | partnership | listing | security | people | market-wide | other, \"summary\": one plain sentence of at most 140 characters saying what the news was}. Use only what the headlines say. If the headlines are mostly generic price commentary or about the whole crypto market, the type is \"market-wide\".",
+ "user": "News spike from 2024-03-17 to 2024-03-17 (41 articles).\nHeadlines:\n- NEAR Protocol Price Up 15 . 2 % Over Last 7 Days ( NEAR ) (www.modernreaders.com)\n- Crypto of the week : Near Protocol ( $NEAR ) (invezz.com)\n- Layer 1 chains with over a million daily active users likely to see gains in coming weeks (www.fxstreet.com)\n- Wanchain ( WAN ) Reaches One Day Trading Volume of $3 . 86 Million (www.modernreaders.com)\n- Wanchain Price Hits $0 . 28 on Major Exchanges ( WAN ) (www.wkrb13.com)\n- Wanchain Tops One Day Trading Volume of $3 . 75 Million ( WAN ) (www.tickerreport.com)\n- Wanchain Hits 1 - Day Volume of $3 . 89 Million ( WAN ) (www.wkrb13.com)\n- Velas ( VLX ) Price Hits $0 . 0226 on Major Exchanges (www.wkrb13.com)",
+ "reply": "{\"type\": \"market-wide\", \"summary\": \"NEAR Protocol rose 15.2% over 7 days and was named 'Crypto of the week' amid broader Layer 1 market gains.\"}"
+}
